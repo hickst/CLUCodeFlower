@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CLU Lab Code Visualization</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <link type="text/css" rel="stylesheet" href="stylesheets/bootstrap.min.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="stylesheets/bootstrap-responsive.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="stylesheets/style.css"/>
+    <style type="text/css">
+circle.node {
+  cursor: pointer;
+  stroke: #000;
+  stroke-width: .5px;
+}
+
+circle.node.directory {
+  stroke: #9ecae1;
+  stroke-width: 2px;
+}
+
+circle.node.collapsed {
+  stroke: #555;
+}
+
+.nodetext {
+  fill: #252929;
+  font-weight: bold;
+  text-shadow: 0 0 0.2em white;
+}
+
+line.link {
+  fill: none;
+  stroke: #9ecae1;
+  stroke-width: 1.5px;
+}
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <div class="container">
+        <h2>CLU Lab Source Code Visualization</h2>
+
+        <p class="para">
+          This project visualizes source repositories using an interactive tree. Each disc
+          represents a file, with a radius proportional to the number of lines of code (LOC).
+          Small discs with a light blue border are directories. Hover on a node to see the
+          number of LOC, click on directory nodes to fold them, drag nodes to rearrange the
+          layout, and use the drop-down selector to change projects
+        </p>
+
+        <p class="para">
+          All rendering is done client-side, in JavaScript.
+          Built with <a href="https://github.com/fzaninotto/CodeFlower">CodeFlower</a>
+          which, in turn, is built with <a href="https://github.com/mbostock/d3">d3.js</a>.
+        </p>
+
+        <form class="form-inline">
+          <fieldset>
+            <label>Choose CLU Lab project:</label>
+            <select id="project">
+              <option value="data/odinweb.cloc">OdinWeb</option>
+              <option value="data/processors.cloc">Processors</option>
+              <option value="data/reach.cloc" selected="true">Reach</option>
+            </select>
+          </fieldset>
+        </form>
+
+        <div id="visualization"></div>
+
+      </div>
+    </div>
+
+    <script type="text/javascript" src="javascripts/d3/d3.js"></script>
+    <script type="text/javascript" src="javascripts/d3/d3.geom.js"></script>
+    <script type="text/javascript" src="javascripts/d3/d3.layout.js"></script>
+    <script type="text/javascript" src="javascripts/CodeFlower.js"></script>
+    <script type="text/javascript" src="javascripts/dataConverter.js"></script>
+    <script type="text/javascript">
+      var currentCodeFlower;
+      var createCodeFlower = function(cloc) {
+        // convert the CLOC file to JSON
+        var json = convertToJSON(cloc, "cloc");
+
+        // remove previous flower to save memory
+        if (currentCodeFlower) currentCodeFlower.cleanup();
+
+        // adapt layout size to the total number of elements
+        // var total = countElements(json);
+        // w = parseInt(Math.sqrt(total) * 30, 10);
+        // h = parseInt(Math.sqrt(total) * 30, 10);
+
+        // create a new CodeFlower
+        w = 600; h = 600;
+        currentCodeFlower = new CodeFlower("#visualization", w, h).update(json);
+      };
+
+      d3.text("data/reach.cloc", createCodeFlower);
+
+      document.getElementById('project').addEventListener('change', function() {
+        d3.text(this.value, createCodeFlower);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+body {
+  font-family: Helvetica, Verdana, Arial, "Lucida Grande", sans-serif;
+  font-size: 16px;
+}
+
+.para {
+  margin: 25px;
+  width: 80%;
+}
+
+#visualization {
+  overflow: auto;
+}
+
+textarea {
+  width: 98%;
+  height: 200px;
+}
